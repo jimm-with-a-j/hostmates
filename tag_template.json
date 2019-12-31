@@ -15,7 +15,7 @@
             "type": "STRING",
             "operator": "EXISTS",
             "value": null,
-            "negate": false,
+            "negate": "false",
             "caseSensitive": null
           }
         }
@@ -37,7 +37,7 @@
             "type": "STRING",
             "operator": "EXISTS",
             "value": null,
-            "negate": false,
+            "negate": "false",
             "caseSensitive": null
           }
         }

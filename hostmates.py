@@ -1,13 +1,16 @@
 import fire
 import json
+import requests
 from config import Config
 
+TAG_ENDPOINT = "/api/config/v1/autoTags/"
 
 class Main:
 
     def __init__(self):
         self.config = Config()
         self.components = self.config.components
+        self.tenant = self.config.tenant
         self.delimiter = self.config.delimiter
         self.num_of_components = len(self.config.components)
 
@@ -33,7 +36,7 @@ class Main:
                 for _ in range(counter - 1):
                     regex_start += "[^_]+_"
 
-                tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/{regex_start}[^{delimiter}]++)}}"\
+                tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/{regex_start}([^{delimiter}]++)}}"\
                     .format(delimiter=self.delimiter, regex_start=regex_start)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/{regex_start}([^{delimiter}]++)}}" \
                     .format(delimiter=self.delimiter, regex_start=regex_start)
@@ -45,8 +48,17 @@ class Main:
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
 
-            print(tag_json)
+            with open("new_file.json", "w") as f:
+                json.dump(tag_json, f)
+
+            self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
+
+    def post_request(self, target, payload):
+        response = requests.post(target, headers=self.config.auth_header, data=json.dumps(payload))
+        print(response.status_code)
+        print(response.content)
+
 
 
 if __name__ == '__main__':
