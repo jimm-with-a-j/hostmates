@@ -1,0 +1,4 @@
+*.yaml
+*.config
+*.conf
+.idea/
