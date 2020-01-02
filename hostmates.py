@@ -48,8 +48,8 @@ class Main:
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
 
-            with open("new_file.json", "w") as f:
-                json.dump(tag_json, f)
+            # with open("new_file.json", "w") as f:
+            #     json.dump(tag_json, f)
 
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
