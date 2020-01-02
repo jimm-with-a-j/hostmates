@@ -1,0 +1,52 @@
+{
+  "metadata": {
+    "configurationVersions": [
+      0
+    ],
+    "clusterVersion": "1.184.56.20191223-151636"
+  },
+  "id": "-4854458922050431173",
+  "name": "ECOM_WEB_PROD_JUNK",
+  "rules": [
+    {
+      "type": "HOST",
+      "enabled": true,
+      "propagationTypes": [],
+      "conditions": [
+        {
+          "key": {
+            "attribute": "HOST_GROUP_NAME"
+          },
+          "comparisonInfo": {
+            "type": "STRING",
+            "operator": "EQUALS",
+            "value": "ECOM_WEB_PROD_JUNK",
+            "negate": false,
+            "caseSensitive": true
+          }
+        }
+      ]
+    },
+    {
+      "type": "PROCESS_GROUP",
+      "enabled": true,
+      "propagationTypes": [
+        "PROCESS_GROUP_TO_SERVICE"
+      ],
+      "conditions": [
+        {
+          "key": {
+            "attribute": "HOST_GROUP_NAME"
+          },
+          "comparisonInfo": {
+            "type": "STRING",
+            "operator": "EQUALS",
+            "value": "ECOM_WEB_PROD_JUNK",
+            "negate": false,
+            "caseSensitive": true
+          }
+        }
+      ]
+    }
+  ]
+}
