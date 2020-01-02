@@ -51,14 +51,20 @@ class Main:
             # with open("new_file.json", "w") as f:
             #     json.dump(tag_json, f)
 
+            print("Creating {component} tag rule...".format(component=component))
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
 
     def post_request(self, target, payload):
-        response = requests.post(target, headers=self.config.auth_header, data=json.dumps(payload))
-        print(response.status_code)
-        print(response.content)
-
+        try:
+            response = requests.post(target, headers=self.config.auth_header, data=json.dumps(payload))
+            assert(str(response.status_code).startswith("2"))
+        except AssertionError as e:
+            print("Non 200 response from API Call")
+            print(response.content)
+        finally:
+            print(response.status_code)
+            return response
 
 
 if __name__ == '__main__':
