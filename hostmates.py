@@ -29,7 +29,7 @@ class Main:
             tag_json['name'] = component['name']
 
             # if first entry in hostgroup
-            if counter == 0:
+            if component['order'] == 0:
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}"\
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}" \
@@ -52,9 +52,6 @@ class Main:
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
-
-            # with open("new_file.json", "w") as f:
-            #     json.dump(tag_json, f)
 
             print("Creating {component} tag rule...".format(component=component))
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
