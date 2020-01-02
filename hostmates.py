@@ -4,6 +4,7 @@ import requests
 from config import Config
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
+MZ_ENDPOINT = "/api/config/v1/managementZones/"
 
 class Main:
 
@@ -13,25 +14,29 @@ class Main:
         self.tenant = self.config.tenant
         self.delimiter = self.config.delimiter
         self.num_of_components = len(self.config.components)
+        self.mz_values = self.config.mz_values
+
+    def create_management_zones(self):
+        print(self.components)
 
     def create_tags(self):
 
-        counter = 1
+        counter = 0
         for component in self.components:
             with open("tag_template.json", "r") as template_json:
                 tag_json = json.load(template_json)
 
-            tag_json['name'] = component
+            tag_json['name'] = component['name']
 
             # if first entry in hostgroup
-            if counter == 1:
+            if counter == 0:
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}"\
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}" \
                     .format(delimiter=self.delimiter)
 
             # for other entries in hostgroup (except for last)
-            if 1 < counter < self.num_of_components:
+            if 0 < counter < self.num_of_components - 1:
                 regex_start = ""
                 for _ in range(counter - 1):
                     regex_start += "[^_]+_"
@@ -42,7 +47,7 @@ class Main:
                     .format(delimiter=self.delimiter, regex_start=regex_start)
 
             # for last entry in hostgroup
-            if counter == self.num_of_components:
+            if counter == self.num_of_components - 1:
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
