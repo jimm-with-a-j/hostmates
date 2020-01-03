@@ -47,7 +47,7 @@ class Main:
             # for other entries in hostgroup (except for last)
             if 0 < counter < self.num_of_components - 1:
                 regex_start = ""
-                for _ in range(counter - 1):
+                for _ in range(component['order'] - 1):
                     regex_start += "[^_]+_"
 
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/{regex_start}([^{delimiter}]++)}}"\
@@ -63,7 +63,6 @@ class Main:
                     .format(delimiter=self.delimiter)
 
             print("Creating {component} tag rule...".format(component=component))
-            print(tag_json)
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
 
