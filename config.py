@@ -16,4 +16,4 @@ class Config:
                                 'Content-Type': 'application/json'}
             self.delimiter = config["delimiter"]
             self.components = config["components"]
-            self.mz_values = config["managementZones"]
+            self.combined_management_zones = config["combinedManagementZones"]

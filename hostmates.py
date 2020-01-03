@@ -14,13 +14,28 @@ class Main:
         self.tenant = self.config.tenant
         self.delimiter = self.config.delimiter
         self.num_of_components = len(self.config.components)
-        self.mz_values = self.config.mz_values
+        self.combined_management_zones = self.config.combined_management_zones
 
     def create_management_zones(self):
-        print(self.components)
+        for combination in self.combined_management_zones:  # e.g. businessUnit_environment
+            arrays = []
+            for portion in combination['components']:  # looking for the values for that portion (e.g. component)
+                for component in self.components:
+                    if component['name'] == portion:
+                        arrays.append(component["mzValues"])  # adding to the array that holds each piece we need
+            for value in arrays[0]:  # taking the first array in the list of pieces we want to combine
+                index = 1
+                while index < len(arrays):  # cycling through and combining them all
+                    for piece in arrays[index]:
+                        mz_name = value + '_' + piece
+                        print(mz_name)
+
+                        # This is where all the work of creating the management zones will go
+
+                    index += 1
+
 
     def create_tags(self):
-
         counter = 0
         for component in self.components:
             with open("tag_template.json", "r") as template_json:
