@@ -2,6 +2,7 @@ import fire
 import json
 import requests
 from config import Config
+import itertools
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
@@ -23,16 +24,9 @@ class Main:
                 for component in self.components:
                     if component['name'] == portion:
                         arrays.append(component["mzValues"])  # adding to the array that holds each piece we need
-            for value in arrays[0]:  # taking the first array in the list of pieces we want to combine
-                index = 1
-                while index < len(arrays):  # cycling through and combining them all
-                    for piece in arrays[index]:
-                        mz_name = value + '_' + piece
-                        print(mz_name)
 
-                        # This is where all the work of creating the management zones will go
-
-                    index += 1
+            combined = list(itertools.product(*arrays))  # creates list with all combinations
+            print(combined)
 
 
     def create_tags(self):
