@@ -38,7 +38,7 @@ class Main:
             tag_json['name'] = component['name']
 
             # if first entry in hostgroup
-            if component['order'] == 0:
+            if component['order'] == 1:
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}"\
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/^([^{delimiter}]++)}}" \
@@ -63,6 +63,7 @@ class Main:
                     .format(delimiter=self.delimiter)
 
             print("Creating {component} tag rule...".format(component=component))
+            print(tag_json)
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
 
