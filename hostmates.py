@@ -3,7 +3,6 @@ import json
 import requests
 from config import Config
 import itertools
-import copy
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
