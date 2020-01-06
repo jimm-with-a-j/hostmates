@@ -26,11 +26,12 @@ class Main:
             for mz in list_of_mzs:
                 with open("dashboard_template.json", "r") as template_json:
                     db_json = json.load(template_json)
-                db_name = '_'.join(mz)
+                mz_name = '_'.join(mz)
+                db_name = ' '.join(mz)
                 db_json['dashboardMetadata']['name'] = db_name + " - Overview"
 
                 # create the dashboards only if 1 management zone (id) matches the name
-                mz_id_list = self.get_id_from_name(db_name, self.tenant + MZ_ENDPOINT)
+                mz_id_list = self.get_id_from_name(mz_name, self.tenant + MZ_ENDPOINT)
                 if len(mz_id_list) > 1:
                     print("Multiple ids for management zone named {mz_name}...Skipping...".format(mz_name=db_name))
                 if len(mz_id_list) == 1:
