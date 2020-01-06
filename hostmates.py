@@ -6,6 +6,7 @@ import itertools
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
+DB_ENDPOINT = "/api/config/v1/dashboards/"
 
 
 class Main:
@@ -25,11 +26,19 @@ class Main:
             for mz in list_of_mzs:
                 with open("dashboard_template.json", "r") as template_json:
                     db_json = json.load(template_json)
-            i = 0
-            while i < len(mz):
                 db_name = '_'.join(mz)
-                db_json['dashboardMetadata']['name'] = db_name + "Overview"
-                i = i + 1
+                db_json['dashboardMetadata']['name'] = db_name + " - Overview"
+
+                # create the dashboards only if 1 management zone (id) matches the name
+                mz_id_list = self.get_id_from_name(db_name, self.tenant + MZ_ENDPOINT)
+                if len(mz_id_list) > 1:
+                    print("Multiple ids for management zone named {mz_name}...Skipping...".format(mz_name=db_name))
+                if len(mz_id_list) == 1:
+                    mz_id = mz_id_list[0]
+                    db_json['dashboardMetadata']['dashboardFilter']['managementZone']['id'] \
+                        = mz_id
+                    print("Creating {db} dashboard...".format(db=db_name))
+                    self.post_request(self.tenant + DB_ENDPOINT, db_json)
 
     def get_id_from_name(self, name, target):
         match_list = []
@@ -44,6 +53,7 @@ class Main:
         return match_list
 
     def create_management_zones(self):
+        print("Creating management zones...")
         for entry in self.combined_management_zones:  # e.g. businessUnit_environment
             list_of_mzs = list(itertools.product(*self.create_list_of_lists_of_mz_values(entry)))
             for mz in list_of_mzs:
@@ -67,10 +77,10 @@ class Main:
             for component in self.components:
                 if component['name'] == tag:
                     list_of_lists_of_mz_values.append(component["mzValues"])
-        print(list_of_lists_of_mz_values)
         return list_of_lists_of_mz_values
 
     def create_tags(self):
+        print("Creating tags...")
         counter = 0
         for component in self.components:
             with open("tag_template.json", "r") as template_json:
