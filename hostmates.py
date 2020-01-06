@@ -31,6 +31,18 @@ class Main:
                 db_json['dashboardMetadata']['name'] = db_name + "Overview"
                 i = i + 1
 
+    def get_id_from_name(self, name, target):
+        match_list = []
+        comparison_list = self.get_request(self.tenant + MZ_ENDPOINT).json()['values']
+        for config in comparison_list:
+            if config['name'] == name:
+                match_list.append(config['id'])
+        if match_list == []:
+            print("No id matches for name {name}".format(name=name))
+        if len(match_list) > 1:
+            print("Warning, multiple IDs match the name {name}".format(name=name))
+        return match_list
+
     def create_management_zones(self):
         for entry in self.combined_management_zones:  # e.g. businessUnit_environment
             list_of_mzs = list(itertools.product(*self.create_list_of_lists_of_mz_values(entry)))
@@ -105,6 +117,18 @@ class Main:
         finally:
             print(response.status_code)
             return response
+
+    def get_request(self, target):
+        try:
+            response = requests.get(target, headers=self.config.auth_header)
+            assert (str(response.status_code).startswith("2"))
+        except AssertionError as e:
+            print("Non 200 response from API Call")
+            print(response.content)
+        finally:
+            return response
+
+
 
 
 def create_condition_json(key, value):
