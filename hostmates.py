@@ -138,7 +138,7 @@ class Main:
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
 
-            print("Creating {component} tag rule...".format(component=component))
+            print("Creating {component} tag rule...".format(component=component['name']))
             self.post_request(self.tenant + TAG_ENDPOINT, tag_json)
             counter = counter + 1
 
