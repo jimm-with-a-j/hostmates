@@ -1,8 +1,8 @@
 import fire
 import json
 import requests
-from config import Config
 import itertools
+import yaml
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
@@ -11,13 +11,18 @@ DB_ENDPOINT = "/api/config/v1/dashboards/"
 
 class Main:
 
-    def __init__(self):
-        self.config = Config()
-        self.components = self.config.components
-        self.tenant = self.config.tenant
-        self.delimiter = self.config.delimiter
-        self.num_of_components = len(self.config.components)
-        self.combined_management_zones = self.config.combined_management_zones
+    def __init__(self, config_file="hostgroups.yaml"):
+        with open(config_file) as config_file:
+            config = yaml.load(config_file, Loader=yaml.FullLoader)
+            self.token = config["apiToken"]
+            self.tenant = config["tenant"]
+            self.auth_header = {'Authorization': 'Api-Token {token}'.format(token=self.token),
+                                'Content-Type': 'application/json'}
+            self.delimiter = config["delimiter"]
+            self.components = config["components"]
+            self.combined_management_zones = config["combinedManagementZones"]
+
+
 
     def create_dashboards(self):
         print("Creating dashboards...")
@@ -120,7 +125,7 @@ class Main:
 
     def post_request(self, target, payload):
         try:
-            response = requests.post(target, headers=self.config.auth_header, data=json.dumps(payload))
+            response = requests.post(target, headers=self.auth_header, data=json.dumps(payload))
             assert (str(response.status_code).startswith("2"))
         except AssertionError as e:
             print("Non 200 response from API Call")
@@ -131,7 +136,7 @@ class Main:
 
     def get_request(self, target):
         try:
-            response = requests.get(target, headers=self.config.auth_header)
+            response = requests.get(target, headers=self.auth_header)
             assert (str(response.status_code).startswith("2"))
         except AssertionError as e:
             print("Non 200 response from API Call")
