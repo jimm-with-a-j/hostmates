@@ -18,15 +18,18 @@ class Main:
         self.num_of_components = len(self.config.components)
         self.combined_management_zones = self.config.combined_management_zones
 
+    def create_list_of_lists_of_mz_values(self, mz_definition):
+        list_of_lists_of_mz_values = []
+        for tag in mz_definition['components']:
+            for component in self.components:
+                if component['name'] == tag:
+                    list_of_lists_of_mz_values.append(component["mzValues"])
+        print(list_of_lists_of_mz_values)
+        return list_of_lists_of_mz_values
+
     def create_management_zones(self):
         for entry in self.combined_management_zones:  # e.g. businessUnit_environment
-            arrays = []
-            for tag in entry['components']:  # looking for the values for that tag (e.g. component)
-                for component in self.components:
-                    if component['name'] == tag:
-                        arrays.append(component["mzValues"])  # adding to the array that holds each piece we need
-
-            list_of_mzs = list(itertools.product(*arrays))  # creates list with all combinations
+            list_of_mzs = list(itertools.product(*self.create_list_of_lists_of_mz_values(entry)))
             for mz in list_of_mzs:
                 with open("mz_template.json", "r") as template_json:
                     mz_json = json.load(template_json)
