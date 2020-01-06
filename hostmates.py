@@ -7,11 +7,13 @@ import yaml
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
 DB_ENDPOINT = "/api/config/v1/dashboards/"
+DEFAULT_CONFIG_FILE = r"hostgroups.yaml"
 
 
 class Main:
 
-    def __init__(self, config_file="hostgroups.yaml"):
+    # use the --config-file=... option to specify a different config file when running
+    def __init__(self, config_file=DEFAULT_CONFIG_FILE):
         with open(config_file) as config_file:
             config = yaml.load(config_file, Loader=yaml.FullLoader)
             self.token = config["apiToken"]
@@ -21,8 +23,6 @@ class Main:
             self.delimiter = config["delimiter"]
             self.components = config["components"]
             self.combined_management_zones = config["combinedManagementZones"]
-
-
 
     def create_dashboards(self):
         print("Creating dashboards...")
