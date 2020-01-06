@@ -21,6 +21,8 @@ class Main:
             self.conf_file = config_file.name
             self.token = config["apiToken"]
             self.tenant = config["tenant"]
+            if self.tenant.endswith('/'):
+                self.tenant = self.tenant[:-1]  # strip trailing slash if present
             self.auth_header = {'Authorization': 'Api-Token {token}'.format(token=self.token),
                                 'Content-Type': 'application/json'}
             self.delimiter = config["delimiter"]
