@@ -140,8 +140,6 @@ class Main:
             return response
 
 
-
-
 def create_condition_json(key, value):
     condition_json = \
         {
@@ -161,6 +159,7 @@ def create_condition_json(key, value):
         }
 
     return condition_json
+
 
 if __name__ == '__main__':
     fire.Fire(Main)
