@@ -18,14 +18,18 @@ class Main:
         self.num_of_components = len(self.config.components)
         self.combined_management_zones = self.config.combined_management_zones
 
-    def create_list_of_lists_of_mz_values(self, mz_definition):
-        list_of_lists_of_mz_values = []
-        for tag in mz_definition['components']:
-            for component in self.components:
-                if component['name'] == tag:
-                    list_of_lists_of_mz_values.append(component["mzValues"])
-        print(list_of_lists_of_mz_values)
-        return list_of_lists_of_mz_values
+    def create_dashboards(self):
+        print("Creating dashboards...")
+        for entry in self.combined_management_zones:  # e.g. businessUnit_environment
+            list_of_mzs = list(itertools.product(*self.create_list_of_lists_of_mz_values(entry)))
+            for mz in list_of_mzs:
+                with open("dashboard_template.json", "r") as template_json:
+                    db_json = json.load(template_json)
+            i = 0
+            while i < len(mz):
+                db_name = '_'.join(mz)
+                db_json['dashboardMetadata']['name'] = db_name + "Overview"
+                i = i + 1
 
     def create_management_zones(self):
         for entry in self.combined_management_zones:  # e.g. businessUnit_environment
@@ -44,6 +48,15 @@ class Main:
                 mz_json['name'] = mz_name
                 print("Creating {mz} management zone...".format(mz=mz_name))
                 self.post_request(self.tenant + MZ_ENDPOINT, mz_json)
+
+    def create_list_of_lists_of_mz_values(self, mz_definition):
+        list_of_lists_of_mz_values = []
+        for tag in mz_definition['components']:
+            for component in self.components:
+                if component['name'] == tag:
+                    list_of_lists_of_mz_values.append(component["mzValues"])
+        print(list_of_lists_of_mz_values)
+        return list_of_lists_of_mz_values
 
     def create_tags(self):
         counter = 0
