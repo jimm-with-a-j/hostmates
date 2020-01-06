@@ -1,15 +1,7 @@
 {
-  "metadata": {
-    "configurationVersions": [
-      3
-    ],
-    "clusterVersion": "1.184.56.20191223-151636"
-  },
-  "id": "d8e54f09-8f46-446c-b1cd-1fe6377174e1",
   "dashboardMetadata": {
-    "name": "Template",
+    "name": "",
     "shared": false,
-    "owner": "james.kitson@dynatrace.com",
     "sharingDetails": {
       "linkShared": true,
       "published": false
@@ -17,8 +9,7 @@
     "dashboardFilter": {
       "timeframe": "",
       "managementZone": {
-        "id": "5671869505854374121",
-        "name": "WEB_PROD"
+        "id": ""
       }
     }
   },

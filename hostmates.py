@@ -3,11 +3,13 @@ import json
 import requests
 import itertools
 import yaml
+import time
 
 TAG_ENDPOINT = "/api/config/v1/autoTags/"
 MZ_ENDPOINT = "/api/config/v1/managementZones/"
 DB_ENDPOINT = "/api/config/v1/dashboards/"
 DEFAULT_CONFIG_FILE = r"hostgroups.yaml"
+SLEEP_PERIOD = 10
 
 
 class Main:
@@ -16,6 +18,7 @@ class Main:
     def __init__(self, config_file=DEFAULT_CONFIG_FILE):
         with open(config_file) as config_file:
             config = yaml.load(config_file, Loader=yaml.FullLoader)
+            self.conf_file = config_file.name
             self.token = config["apiToken"]
             self.tenant = config["tenant"]
             self.auth_header = {'Authorization': 'Api-Token {token}'.format(token=self.token),
@@ -23,6 +26,22 @@ class Main:
             self.delimiter = config["delimiter"]
             self.components = config["components"]
             self.combined_management_zones = config["combinedManagementZones"]
+
+    # applies everything set in config file (tags, management zones, dashboards etc...
+    def apply_config(self):
+        print("Applying entire {conf_file} config file...".format(conf_file=self.conf_file))
+        time.sleep(5)
+
+        self.create_tags()
+        print("Waiting {time} seconds".format(time=SLEEP_PERIOD))
+        time.sleep(SLEEP_PERIOD)
+
+        self.create_management_zones()
+        print("Waiting {time} seconds".format(time=SLEEP_PERIOD))
+        time.sleep(SLEEP_PERIOD)
+
+        self.create_dashboards()
+        print("Completed...")
 
     def create_dashboards(self):
         print("Creating dashboards...")
@@ -102,7 +121,7 @@ class Main:
                     .format(delimiter=self.delimiter)
 
             # for other entries in hostgroup (except for last)
-            if 0 < counter < self.num_of_components - 1:
+            if 0 < counter < len(self.components) - 1:
                 regex_start = ""
                 for _ in range(component['order'] - 1):
                     regex_start += "[^_]+_"
@@ -113,7 +132,7 @@ class Main:
                     .format(delimiter=self.delimiter, regex_start=regex_start)
 
             # for last entry in hostgroup
-            if counter == self.num_of_components - 1:
+            if counter == len(self.components) - 1:
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
                     .format(delimiter=self.delimiter)
                 tag_json['rules'][1]['valueFormat'] = "{{HostGroup:Name/([^${delimiter}]++)$}}" \
@@ -145,6 +164,7 @@ class Main:
             return response
 
 
+# used to create snippets of json for use in the management zone conditions
 def create_condition_json(key, value):
     condition_json = \
         {
