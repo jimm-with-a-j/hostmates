@@ -32,7 +32,7 @@ class Main:
     # applies everything set in config file (tags, management zones, dashboards etc...
     def apply_config(self):
         print("Applying entire {conf_file} config file...".format(conf_file=self.conf_file))
-        time.sleep(5)
+        # time.sleep(5)
 
         self.create_tags()
         print("Waiting {time} seconds".format(time=SLEEP_PERIOD))
@@ -126,7 +126,7 @@ class Main:
             if 0 < counter < len(self.components) - 1:
                 regex_start = ""
                 for _ in range(component['order'] - 1):
-                    regex_start += "[^_]+_"
+                    regex_start += "[^{delimiter}]+{delimiter}".format(delimiter=self.delimiter)
 
                 tag_json['rules'][0]['valueFormat'] = "{{HostGroup:Name/{regex_start}([^{delimiter}]++)}}" \
                     .format(delimiter=self.delimiter, regex_start=regex_start)
